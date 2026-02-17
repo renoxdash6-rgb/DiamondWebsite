@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FE-LIX RICKEY TOP-UP</title>
+    <style>
+        :root {
+            --gold: linear-gradient(45deg, #d4af37, #f2d06b, #b8860b);
+            --gold-glow: 0 0 15px rgba(212, 175, 55, 0.7);
+            --dark-bg: #050505;
+            --card-bg: rgba(20, 20, 20, 0.98);
+            --gold-text: #f2d06b;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--dark-bg);
+            color: #e0e0e0;
+            margin: 0;
+            overflow-x: hidden;
+            padding: 10px;
+        }
+
+        /* 🪙 အလွန်နှေးကွေးသော ရွှေဒင်္ဂါး Animation */
+        .gold-rain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .coin { position: absolute; font-size: 24px; top: -50px; animation: slowFall 12s linear forwards; filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.8)); }
+        @keyframes slowFall { 0% { transform: translateY(0vh) rotate(0deg); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+
+        .container {
+            max-width: 480px; margin: 20px auto; background: var(--card-bg);
+            padding: 25px; border-radius: 30px; border: 1px solid #d4af3766;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.15); position: relative; z-index: 10;
+        }
+
+        .header h2 { text-align: center; background: var(--gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.8rem; font-weight: 900; filter: drop-shadow(var(--gold-glow)); margin: 0; }
+
+        .tab-box { display: flex; gap: 10px; margin: 25px 0; }
+        .tab-btn { flex: 1; padding: 12px; border: 1px solid #333; background: #111; color: #888; border-radius: 12px; cursor: pointer; font-weight: bold; }
+        .tab-btn.active { border-color: #f2d06b; color: #f2d06b; box-shadow: var(--gold-glow); background: rgba(212, 175, 55, 0.05); }
+
+        input { width: 100%; padding: 15px; background: #1a1a1a; border: 1px solid #333; border-radius: 12px; color: white; margin-bottom: 15px; box-sizing: border-box; }
+        input:focus { border-color: #f2d06b; box-shadow: var(--gold-glow); outline: none; }
+
+        .section-title { color: var(--gold-text); font-size: 0.85rem; margin: 20px 0 10px; font-weight: bold; text-shadow: var(--gold-glow); }
+        .price-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .price-item { background: #151515; border: 1px solid #222; padding: 15px 10px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .price-item.selected { background: var(--gold); color: black; font-weight: 800; border: none; box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
+
+        .shine-btn { position: relative; overflow: hidden; width: 100%; padding: 18px; background: var(--gold); border: none; border-radius: 15px; color: #000; font-weight: 900; font-size: 1.1rem; cursor: pointer; box-shadow: var(--gold-glow); }
+        .shine-btn::after { content: ""; position: absolute; top: -50%; left: -150%; width: 50%; height: 200%; background: rgba(255, 255, 255, 0.6); transform: rotate(30deg); animation: shine 3s infinite; }
+        @keyframes shine { 0% { left: -150%; } 30% { left: 150%; } 100% { left: 150%; } }
+
+        /* Customer Service Section */
+        .cs-section { text-align: center; margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; }
+        .cs-btn { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-text); text-decoration: none; font-weight: bold; padding: 10px 20px; border: 1px solid #d4af3744; border-radius: 30px; transition: 0.3s; }
+        .cs-btn:hover { background: rgba(212, 175, 55, 0.1); box-shadow: var(--gold-glow); }
+
+        .payment-card { background: #111; border-radius: 15px; padding: 15px; margin: 20px 0; border: 1px solid #d4af3733; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="gold-rain" id="goldRain"></div>
+
+<div class="container">
+    <div class="header">
+        <h2>⚔️ FE-LIX RICKEY ⚔️</h2>
+        <p style="text-align: center; font-size: 0.7rem; color: #888; letter-spacing: 2px;">PREMIUM TOP-UP SERVICE</p>
+    </div>
+
+    <div class="tab-box">
+        <button class="tab-btn active" onclick="switchGame('ml')">MOBILE LEGENDS</button>
+        <button class="tab-btn" onclick="switchGame('pubg')">PUBG MOBILE</button>
+    </div>
+
+    <input type="number" id="playerID" placeholder="Player ID">
+    <input type="number" id="serverID" placeholder="Server ID">
+
+    <div id="ml-content">
+        <div class="section-title">💎 DIAMOND LIST</div>
+        <div class="price-grid" id="ml-grid">
+            </div>
+    </div>
+
+    <div id="pubg-content" style="display: none;">
+        <div class="section-title">🔥 PUBG UC LIST</div>
+        <div class="price-grid" id="pubg-grid">
+            </div>
+    </div>
+
+    <div class="payment-card">
+        <strong style="color: #f2d06b;">KPay / Wave: 09 753 560 935</strong><br>
+        <span style="font-size: 0.8rem; color: #888;">Name: Thu Zar Khaing</span>
+    </div>
+
+    <div style="text-align:center; margin-bottom:15px;">
+        <p style="font-size: 0.8rem; color: #f2d06b;">📸 ငွေလွှဲပြေစာထည့်ရန်</p>
+        <input type="file" id="receiptFile">
+    </div>
+
+    <button class="shine-btn" onclick="sendOrder()">ORDER NOW (TELEGRAM API)</button>
+
+    <div class="cs-section">
+        <p style="font-size: 0.7rem; color: #666; margin-bottom: 10px;">အဆင်မပြေမှုရှိပါက ဆက်သွယ်ရန်</p>
+        <a href="https://t.me/felixrickey" target="_blank" class="cs-btn">
+            ✈️ Customer Service (@felixrickey)
+        </a>
+    </div>
+</div>
+
+<script>
+    // --- TELEGRAM BOT CONFIG ---
+    const BOT_TOKEN = "8423655963:AAF_nBfmXdGsMU204lEPwHSm29kJXk1dvGE"; // သင့် Bot Token ထည့်ပါ
+    const CHAT_ID = "8214765075";     // သင့် Chat ID ထည့်ပါ
+    // ---------------------------
+
+    const mlPrices = [
+        {n: 'Weekly Pass', p: '5900'}, {n: 'Twilight Pass', p: '31500'},
+        {n: '11 Dia', p: '800'}, {n: '56 Dia', p: '3500'}, {n: '112 Dia', p: '6700'},
+        {n: '275 Dia', p: '15500'}, {n: '570 Dia', p: '34000'}, {n: '1063 Dia', p: '67500'}
+    ];
+    const pubgPrices = [{n: '60 UC', p: '4000'}, {n: '325 UC', p: '20000'}, {n: '660 UC', p: '39000'}, {n: '1800 UC', p: '96000'}];
+
+    function renderPrices(items, target) {
+        document.getElementById(target).innerHTML = items.map(i => `
+            <div class="price-item" onclick="select(this, '${i.n}', '${i.p}')">
+                <span>${i.n}</span><br><small>${i.p} Ks</small>
+            </div>
+        `).join('');
+    }
+    renderPrices(mlPrices, 'ml-grid'); renderPrices(pubgPrices, 'pubg-grid');
+
+    let sel = "";
+    function select(el, n, p) {
+        document.querySelectorAll('.price-item').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        sel = n + " - " + p + " Ks";
+    }
+
+    function switchGame(g) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+        document.getElementById('ml-content').style.display = g==='ml'?'block':'none';
+        document.getElementById('pubg-content').style.display = g==='pubg'?'block':'none';
+        document.getElementById('serverID').style.display = g==='ml'?'block':'none';
+    }
+
+    // API ကိုအသုံးပြုပြီး Telegram ဆီ တိုက်ရိုက်ပို့ခြင်း
+    async function sendOrder() {
+        const id = document.getElementById('playerID').value;
+        const sid = document.getElementById('serverID').value;
+        if(!id || !sel) return alert("အချက်အလက်ပြည့်စုံစွာဖြည့်ပါ");
+
+        const text = `🔔 NEW ORDER!!\n──────────\nGame: ${document.querySelector('.tab-btn.active').innerText}\nID: ${id}\nServer: ${sid || '-'}\nPackage: ${sel}\n──────────`;
+
+        // Telegram API Link
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`;
+
+        try {
+            await fetch(url);
+            alert("Order ပို့ပြီးပါပြီ။ Admin က ခဏအတွင်း ထည့်ပေးပါလိမ့်မယ်။");
+            window.location.href = "https://t.me/felixrickey"; // ပို့ပြီးရင် CS ဆီကိုပါ လမ်းကြောင်းပေးလိုက်မယ်
+        } catch (e) {
+            // API မရရင် သာမန် Telegram Link နဲ့ ပို့မယ်
+            window.open(`https://t.me/felixrickey?text=${encodeURIComponent(text)}`);
+        }
+    }
+
+    // Coin Animation (5s/1coin)
+    function spawn() {
+        const rain = document.getElementById('goldRain');
+        const c = document.createElement('div');
+        c.className = 'coin';
+        c.innerText = ['💰','🪙','💎','✨'][Math.floor(Math.random()*4)];
+        c.style.left = Math.random()*100+'vw';
+        rain.appendChild(c);
+        setTimeout(() => c.remove(), 12000);
+    }
+    setInterval(spawn, 5000); spawn();
+</script>
+
+</body>
+</html>
